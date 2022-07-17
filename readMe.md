@@ -31,4 +31,4 @@ effecient and scalable web based solutions.
 
 ## License
 
-GTA V Card is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Generate Random Activities API is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
