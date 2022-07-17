@@ -21,6 +21,7 @@ useCors(app);
 
 // Import all data
 const allCategories = require("./src/categories");
+const allActivities = require("./src/activities");
 // Get all categories
 app.get("/categories", (req, res) => {
     res.json(allCategories);
@@ -29,10 +30,11 @@ app.get("/categories", (req, res) => {
 // Get single category
 app.get("/categories/:id", (req, res) => {
     let result = allCategories.find((category) => {
+        if (req.query.search == "name") return category.name == req.params.id;
         return category.id == req.params.id;
     });
 
-    if (typeof result !== 'object') {
+    if (typeof result !== "object") {
         result = {};
     }
 
@@ -40,13 +42,32 @@ app.get("/categories/:id", (req, res) => {
 });
 
 // Get Activities from a category
-app.get("/activities/:id", (req, res) => {
-    let result = allCategories.find((category) => {
-        return category.id == req.params.id;
+app.get("/activities/:category", (req, res) => {
+    // Get category
+    let category = allCategories.find((category) => {
+        if (req.query.category == "name")
+            return category.name == req.params.category;
+        return category.id == req.params.category;
     });
 
-    if (typeof result !== 'object') {
-        result = {};
+    if (typeof category !== "object") return res.status(404);
+
+    let categoryActivities = allActivities.find((activities) => {
+        if (activities.category_id == category.id) return activities;
+    });
+
+    let result = [];
+    // Add request filters
+    let random = req.query.random == "true" ? true : false;
+
+    if (random == true) {
+        let randomActivity =
+            categoryActivities.activities[
+                Math.floor(Math.random() * categoryActivities.activities.length)
+            ];
+        result.push(randomActivity);
+    } else {
+        result = categoryActivities.activities;
     }
 
     res.json(result);
